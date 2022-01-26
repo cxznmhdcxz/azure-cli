@@ -246,6 +246,11 @@ class ImageTemplateTest(ScenarioTest):
         self.cmd('sig image-definition create -g {rg} --gallery-name {gallery} --gallery-image-definition {sig1} '
                  '--os-type linux -p publisher1 -f offer1 -s sku1')
 
+        self.cmd('sig image-definition update -g {rg} --gallery-name {gallery} --gallery-image-definition {sig1} --set description="foo"', checks=[
+            self.check('description', 'foo'),
+            self.check('name', self.kwargs['sig1'])
+        ])
+
         # Test that sig output can be set through output.
 
         self.kwargs['sig_out'] = "{}/{}=westus,eastus".format(self.kwargs['gallery'], self.kwargs['sig1'])
