@@ -1019,6 +1019,7 @@ class VMCreateAndStateModificationsScenarioTest(ScenarioTest):
             self.check('instanceView.statuses[1].code', expected_power_state),
         ])
 
+    @AllowLargeResponse()
     @ResourceGroupPreparer(name_prefix='cli_test_vm_state_mod')
     def test_vm_create_state_modifications(self, resource_group):
 
@@ -1055,6 +1056,8 @@ class VMCreateAndStateModificationsScenarioTest(ScenarioTest):
 
         self.cmd('vm user update -g {rg} -n {vm} -u foouser1 -p Foo12345')
         self.cmd('vm user delete -g {rg} -n {vm} -u foouser1')
+
+        self.cmd('vm user reset-ssh -g {rg} -n {vm}', checks=self.check('provisioningState', 'Succeeded'))
 
         self.cmd('network nsg show --resource-group {rg} --name {nsg}', checks=[
             self.check('tags.firsttag', '1'),
@@ -2146,6 +2149,18 @@ class DiagnosticsExtensionInstallTest(ScenarioTest):
         ])
 
 
+# class VMGetDefaultConfig(ScenarioTest):
+#     def test_vm_get_default_config(self):
+#         self.cmd('vm diagnostics get-default-config')
+#         self.cmd('vm diagnostics get-default-config --is-windows-os')
+
+
+# class VMSSGetDefaultConfig(ScenarioTest):
+#     def test_vmss_get_default_config(self):
+#         self.cmd('vmss diagnostics get-default-config')
+#         self.cmd('vmss diagnostics get-default-config --is-windows-os')
+
+
 class VMCreateExistingOptions(ScenarioTest):
 
     @ResourceGroupPreparer(name_prefix='cli_test_vm_create_existing')
@@ -3112,6 +3127,20 @@ class VMSSUpdateTests(ScenarioTest):
         self.cmd('vmss update -g {rg} -n {vmss} --set tags.foo=bar', checks=[
             self.check('tags.foo', 'bar')
         ])
+
+    @ResourceGroupPreparer(name_prefix='cli_test_vmss_update_os_')
+    def test_vmss_update_os(self, resource_group):
+        self.kwargs.update({
+            'vmss': 'vmss'
+        })
+
+        # create with an older image version
+        self.cmd('vmss create -g {rg} -n {vmss} --image "Debian:debian-10-daily:10:0.20220113.886" --instance-count 1 --admin-username admin123 --admin-password PasswordPassword1!')
+
+        # update vmss os image version
+        self.cmd('vmss update --resource-group {rg} --name {vmss} --set virtualMachineProfile.storageProfile.imageReference.version=latest')
+
+        self.cmd('vmss get-os-upgrade-history -g {rg} -n {vmss}')
 
     @ResourceGroupPreparer(name_prefix='cli_test_vmss_update_vm_sku_', location='westus2')
     def test_vmss_update_vm_sku(self, resource_group, resource_group_location):
