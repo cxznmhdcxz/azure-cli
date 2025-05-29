@@ -16,6 +16,9 @@ from azure.cli.core.aaz import *
 )
 class Create(AAZCommand):
     """Create an EventHub schema group.
+
+    :example: Create an EventHub schema group.
+        az eventhubs namespace schema-registry create -g rg --namespace-name namespace --name myschema --schema-compatibility None --schema-type Avro
     """
 
     _aaz_info = {

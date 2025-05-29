@@ -16,6 +16,9 @@ from azure.cli.core.aaz import *
 )
 class Create(AAZCommand):
     """Create an instance of an Event Hubs Cluster.
+
+    :example: Create an instance of Event Hubs Cluster
+        az eventhubs cluster create --resource-group myResourceGroup --name testCluster  --capacity 1 --location westus --tags "{tag1:value1,tag2:value2}"
     """
 
     _aaz_info = {

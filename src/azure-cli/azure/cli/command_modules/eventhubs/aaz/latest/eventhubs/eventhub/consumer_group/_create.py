@@ -16,6 +16,9 @@ from azure.cli.core.aaz import *
 )
 class Create(AAZCommand):
     """Create an Event Hubs consumer group as a nested resource within a Namespace.
+
+    :example: Create an Event Hubs consumer group as a nested resource within a Namespace.
+        az eventhubs eventhub consumer-group create --resource-group myResourceGroup --namespace-name myNamespace --eventhub-name myEventHub --consumer-group-name myConsumerGroup --user-metadata metadata
     """
 
     _aaz_info = {
